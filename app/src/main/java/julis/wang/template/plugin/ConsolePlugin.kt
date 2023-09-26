@@ -1,4 +1,4 @@
-package julis.wang.template
+package julis.wang.template.plugin
 
 import android.util.Log
 import com.eclipsesource.v8.V8

@@ -34,7 +34,7 @@ var testPromise = /*#__PURE__*/function () {
   };
 }();
 var testConsoleLog = function testConsoleLog() {
-  console.log("this log is from Js.");
+  console.log("" + "\n\n\n console.log print:\n" + "=================================\n" + "|| This log is from JavaScript. ||" + "\n=================================\n");
 };
 var testTimeOut = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
@@ -44,14 +44,13 @@ var testTimeOut = /*#__PURE__*/function () {
         case 0:
           sleep = function sleep(ms) {
             return new Promise(function (resolve) {
-              return setTimeout(resolve, ms);
+              return setTimeout(function () {
+                resolve("return this value after ".concat(ms, "ms."));
+              }, ms);
             });
           };
-          _context2.next = 3;
-          return sleep(3000);
-        case 3:
-          return _context2.abrupt("return", 'func sleep 3000');
-        case 4:
+          return _context2.abrupt("return", sleep(3000));
+        case 2:
         case "end":
           return _context2.stop();
       }

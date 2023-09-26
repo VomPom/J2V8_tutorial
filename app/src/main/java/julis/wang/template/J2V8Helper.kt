@@ -7,10 +7,11 @@ import com.eclipsesource.v8.V8
 import com.eclipsesource.v8.V8Array
 import com.eclipsesource.v8.V8Function
 import com.eclipsesource.v8.V8Object
+import julis.wang.template.plugin.ConsolePlugin
+import julis.wang.template.plugin.SetTimeOutPlugin
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.CountDownLatch
-import java.util.logging.Handler
 
 /**
  * Created by @juliswang on 2023/09/25 19:38
@@ -48,6 +49,12 @@ object J2V8Helper {
         } catch (e: Exception) {
             Log.e(TAG, "js run exception,error, functionName:$functionName\n stack:${e.stackTraceToString()}")
         }
+        if ((result is V8Object) && !result.isUndefined && result.constructorName.equals("Promise")) {
+            result.close()
+            throw RuntimeException(
+                "The function [$functionName] in $moduleName's return type is Promise, please use [runJSPromise] instead of [runJs]."
+            )
+        }
         jsLibrary?.close()
         parameters.close()
         jsRuntime.close()
@@ -78,7 +85,7 @@ object J2V8Helper {
                 //FIXME:: simple use index [0], can complete...
                 val result = parameters[0].toString()
                 android.os.Handler(Looper.getMainLooper()).post {
-                    listener.onResolve(result)
+                    listener.onReject(result)
                 }
                 parameters.close()
                 receiver.close()
@@ -139,8 +146,8 @@ object J2V8Helper {
      * sample register "console.log" native plugin.
      */
     private fun simpleNativePlugin() {
-        val consolePlugin = ConsolePlugin()
-        consolePlugin.register(jsRuntime)
+        ConsolePlugin().register(jsRuntime)
+        SetTimeOutPlugin().register(jsRuntime)
         // u can add more native plugins at there.
     }
 

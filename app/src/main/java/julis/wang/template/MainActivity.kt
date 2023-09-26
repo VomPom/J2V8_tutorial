@@ -1,10 +1,10 @@
 package julis.wang.template
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 params.add(Gson().toJson(event))
             }
         }
-        // ensure that "complexFunc" can be called.
+        // ensure that "complexFunc" can be called...
         if (funName == null) {
             return
         }
@@ -63,13 +63,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun complexFunc(v: View?, moduleName: String) {
-        var funName = ""
         val params = mutableListOf<Any>()
 
         when (v?.id) {
             R.id.btn_promise -> {
-                funName = "testPromise"
-                J2V8Helper.runJSPromise(moduleName, funName, params, object : J2V8Helper.OnPromise {
+                J2V8Helper.runJSPromise(moduleName, "testPromise", params, object : J2V8Helper.OnPromise {
                     override fun onResolve(result: Any) {
                         Toast.makeText(this@MainActivity, "Run [testPromise] Result:\n$result", Toast.LENGTH_SHORT).show()
                     }
@@ -79,8 +77,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 })
             }
             R.id.btn_nested_promise -> {
-                funName = "testNestedPromise"
-                J2V8Helper.runJSPromise(moduleName, funName, params, object : J2V8Helper.OnPromise {
+                J2V8Helper.runJSPromise(moduleName, "testNestedPromise", params, object : J2V8Helper.OnPromise {
                     override fun onResolve(result: Any) {
                         Toast.makeText(this@MainActivity, "Run [testNestedPromise]:\n$result", Toast.LENGTH_SHORT).show()
                     }
@@ -90,18 +87,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 })
             }
             R.id.btn_console -> {
-                funName = "testConsoleLog"
-                J2V8Helper.runJS(moduleName, funName, params)
-                Toast.makeText(this@MainActivity, "See your Android Studio's Logcat, maybe printed sth.", Toast.LENGTH_SHORT)
+                J2V8Helper.runJS(moduleName, "testConsoleLog", params)
+                Toast.makeText(this@MainActivity, "See your Android Studio's Logcat, maybe printed sth.", Toast.LENGTH_LONG)
                     .show()
             }
             R.id.btn_set_time_out -> {
-                funName = "testTimeOut"
                 Toast.makeText(
                     this@MainActivity,
-                    "[testTimeOut] has not been implemented yet.", Toast.LENGTH_LONG
+                    "Wait for a moment...", Toast.LENGTH_SHORT
                 ).show()
-                //TODO:: The implementation method is the same as ConsolePlugin.
+                J2V8Helper.runJSPromise(moduleName, "testTimeOut", params, object : J2V8Helper.OnPromise {
+                    override fun onResolve(result: Any) {
+                        Toast.makeText(this@MainActivity, "Run [testTimeOut]:\n$result", Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onReject(result: Any) {
+                    }
+                })
             }
         }
     }
